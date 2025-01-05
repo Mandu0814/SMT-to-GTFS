@@ -7,11 +7,11 @@ import {Map} from 'react-map-gl';
 import {AmbientLight, PointLight, LightingEffect} from '@deck.gl/core';
 import {TripsLayer} from '@deck.gl/geo-layers';
 import {
-  // IconLayer,
+  IconLayer,
   LineLayer, 
   PolygonLayer, 
   ScatterplotLayer, 
-  // PathLayer
+  PathLayer
 } from "@deck.gl/layers";
 
 import Slider from "@mui/material/Slider";
@@ -57,20 +57,20 @@ const DEFAULT_THEME = {
 };
 
 const INITIAL_VIEW_STATE = { 
-  longitude: 126.98, // 126.98 , -74
-  latitude: 37.57, // 37.57 , 40.72
-  zoom: 10,
-  pitch: 45,
-  bearing: 0
+  longitude: 126.924210, // 126.98 , -74
+  latitude: 37.566297, // 37.57 , 40.72
+  zoom: 12.5,
+  pitch: 30,
+  bearing: 33
 };
 
-// const ICON_MAPPING = {
-//     marker: { x: 0, y: 0, width: 128, height: 128, mask: true },
-// };
+const ICON_MAPPING = {
+    marker: { x: 0, y: 0, width: 128, height: 128, mask: true },
+};
 
-const minTime = 0;
-const maxTime = 240;
-const animationSpeed = 1;
+const minTime = 60 * 4;
+const maxTime = 60 * 26;
+const animationSpeed = 5;
 const mapStyle = "mapbox://styles/spear5306/ckzcz5m8w002814o2coz02sjc";
 const MAPBOX_TOKEN = `pk.eyJ1Ijoic2hlcnJ5MTAyNCIsImEiOiJjbG00dmtic3YwbGNoM2Zxb3V5NmhxZDZ6In0.ZBrAsHLwNihh7xqTify5hQ`;
 
@@ -111,17 +111,15 @@ const Trip = (props) => {
   const [time, setTime] = useState(minTime);
   const [animation] = useState({});
 
-  // const icon = props.icon;
+  const line = props.line;
   const trip = props.trip;
-  const ps = currData(props.passenger, time);
-  const building = props.building;
-  const building_vertiport = props.building_vertiport;
+  const stop = props.stop;
 
-  const vertiport = props.vertiport;
+  const line2 = props.line2;
+  const trip2 = props.trip2;
+  const stop2 = props.stop2;
 
-  const nodes = props.nodes;
-  const links = props.links;
-
+  // const ps = currData(props.passenger, time);
 
 
   const animate = useCallback(() => {
@@ -136,36 +134,68 @@ const Trip = (props) => {
 
   // 버티포트
   const layers = [
-    // new IconLayer({
-    //   id: "location",
-    //   data: icon,
-    //   sizeScale: 7,
-    //   iconAtlas:
-    //     "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png",
-    //   iconMapping: ICON_MAPPING,
-    //   getIcon: d => "marker",
-    //   getSize: 2,
-    //   getPosition: d => d.coordinates,
-    //   getColor: d => d.color,
-    //   opacity: 1,
-    //   mipmaps: false,
-    //   pickable: true,
-    //   radiusMinPixels: 2,
-    //   radiusMaxPixels: 2,
-    // }),
-
-    new TripsLayer({  
-      id: 'trips',
-      data: ps,
-      getPath: d => d.route,
-      getTimestamps: d => d.timestamp,
-      getColor: [255, 255, 50],
+    new PathLayer({  
+      id: 'lines',
+      data: line,
+      getPath: d => d.lines,
+      // getColor: d => d.color,
+      getColor: d => [255,255,255],
       opacity: 0.7,
-      widthMinPixels: 3,
+      widthMinPixels: 1,
+      widthScale: 1,
+      pickable: true,  
       rounded: true,
-      trailLength : 0.5,
-      currentTime: time,
       shadowEnabled: false
+    }),
+
+    new PathLayer({  
+      id: 'lines2',
+      data: line2,
+      getPath: d => d.lines,
+      // getColor: d => d.color,
+      getColor: d => [255,255,255],
+      opacity: 0.7,
+      widthMinPixels: 1,
+      widthScale: 1,
+      pickable: true,  
+      rounded: true,
+      shadowEnabled: false
+    }),
+
+    new IconLayer({
+      id: "location",
+      data: stop,
+      sizeScale: 7,
+      iconAtlas:
+        "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png",
+      iconMapping: ICON_MAPPING,
+      getIcon: d => "marker",
+      getSize: 2,
+      getPosition: d => d.coordinates,
+      getColor: [255,255,255],
+      opacity: 1,
+      mipmaps: false,
+      pickable: true,
+      radiusMinPixels: 2,
+      radiusMaxPixels: 2,
+    }),
+
+    new IconLayer({
+      id: "location2",
+      data: stop2,
+      sizeScale: 7,
+      iconAtlas:
+        "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png",
+      iconMapping: ICON_MAPPING,
+      getIcon: d => "marker",
+      getSize: 2,
+      getPosition: d => d.coordinates,
+      getColor: [255,255,255],
+      opacity: 1,
+      mipmaps: false,
+      pickable: true,
+      radiusMinPixels: 2,
+      radiusMaxPixels: 2,
     }),
 
     new TripsLayer({  
@@ -175,28 +205,32 @@ const Trip = (props) => {
       getTimestamps: d => d.timestamp,
       getColor: [255, 0, 0],
       opacity: 1,
-      widthMinPixels: 7,
+      widthMinPixels: 4,
       rounded: true,
       capRounded : true,
       jointRounded : true,
-      trailLength : 0.5,
+      trailLength : 3,
       currentTime: time,
       shadowEnabled: false
     }),
 
-    new LineLayer({
-      id: 'line-layer',
-      data: links,
-      getSourcePosition: d => nodes.find(node => node.name === d.source).coordinates,
-      getTargetPosition: d => nodes.find(node => node.name === d.target).coordinates,
-      getColor: [200,200,200],
-      // getColor: [255, 255 ,255],
-      opacity : 0.1 ,
-      highlight_color: [255, 255, 0],
-      auto_highlight: true,
-      // picking_radius: 10,
-      widthMinPixels: 3,
+    new TripsLayer({  
+      id: 'trips2',
+      data: trip2,
+      getPath: d => d.route,
+      getTimestamps: d => d.timestamp,
+      getColor: [255, 0, 0],
+      opacity: 1,
+      widthMinPixels: 4,
+      rounded: true,
+      capRounded : true,
+      jointRounded : true,
+      trailLength : 3,
+      currentTime: time,
+      shadowEnabled: false
     }),
+
+
 
     // new ScatterplotLayer({
     //   id: 'scatterplot-layer',
@@ -208,40 +242,6 @@ const Trip = (props) => {
     //   opacity: 0.8,
     // }),
 
-    new ScatterplotLayer({
-      id: 'scatterplot-layer',
-      data: vertiport,
-      getPosition: d => d.coordinates,
-      getFillColor: [255, 0, 0],
-      getRadius: d => 100, // Adjust the radius as needed
-      pickable: true,
-      opacity: 0.8,
-    }),
-
-    // 건물 
-    new PolygonLayer({
-      id: 'buildings',
-      data: building,
-      extruded: true,
-      wireframe: false,
-      opacity: 0.5,
-      getPolygon: f => f.coordinates,
-      getElevation: f => f.height,
-      getFillColor: DEFAULT_THEME.buildingColor,
-      material: DEFAULT_THEME.material
-    }),
-
-    new PolygonLayer({
-      id: 'buildings',
-      data: building_vertiport,
-      extruded: true,
-      wireframe: false,
-      opacity: 0.01,
-      getPolygon: f => f.coordinates,
-      getElevation: f => f.height,
-      getFillColor: DEFAULT_THEME.buildingColor2,
-      material: DEFAULT_THEME.material2
-    })
   ];
   
   const SliderChange = (value) => {
@@ -261,7 +261,10 @@ const Trip = (props) => {
       >
         <Map mapStyle={mapStyle} mapboxAccessToken={MAPBOX_TOKEN} preventStyleDiffing={true}/>
       </DeckGL>
-      <h1 className="time">TIME : {`${hour} : ${minute}`}</h1>
+      <h1 className="time">TIME : {`${hour} : ${minute}`}
+        <br />
+        {props.name}
+      </h1>
       <Slider
         id="slider"
         value={time}
