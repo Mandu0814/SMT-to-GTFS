@@ -68,9 +68,9 @@ const ICON_MAPPING = {
     marker: { x: 0, y: 0, width: 128, height: 128, mask: true },
 };
 
-const minTime = 60 * 4;
-const maxTime = 60 * 26;
-const animationSpeed = 5;
+const minTime = 60 * 18 + 20;
+const maxTime = 60 * 21 + 40;
+const animationSpeed = 0.2;
 const mapStyle = "mapbox://styles/spear5306/ckzcz5m8w002814o2coz02sjc";
 const MAPBOX_TOKEN = `pk.eyJ1Ijoic2hlcnJ5MTAyNCIsImEiOiJjbG00dmtic3YwbGNoM2Zxb3V5NmhxZDZ6In0.ZBrAsHLwNihh7xqTify5hQ`;
 
@@ -162,41 +162,41 @@ const Trip = (props) => {
       shadowEnabled: false
     }),
 
-    new IconLayer({
-      id: "location",
-      data: stop,
-      sizeScale: 7,
-      iconAtlas:
-        "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png",
-      iconMapping: ICON_MAPPING,
-      getIcon: d => "marker",
-      getSize: 2,
-      getPosition: d => d.coordinates,
-      getColor: [255,255,255],
-      opacity: 1,
-      mipmaps: false,
-      pickable: true,
-      radiusMinPixels: 2,
-      radiusMaxPixels: 2,
-    }),
+    // new IconLayer({
+    //   id: "stop",
+    //   data: stop,
+    //   sizeScale: 7,
+    //   iconAtlas:
+    //     "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png",
+    //   iconMapping: ICON_MAPPING,
+    //   getIcon: d => "marker",
+    //   getSize: 2,
+    //   getPosition: d => d.coordinates,
+    //   getColor: [255,255,255],
+    //   opacity: 0.1,
+    //   mipmaps: false,
+    //   pickable: true,
+    //   radiusMinPixels: 2,
+    //   radiusMaxPixels: 2,
+    // }),
 
-    new IconLayer({
-      id: "location2",
-      data: stop2,
-      sizeScale: 7,
-      iconAtlas:
-        "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png",
-      iconMapping: ICON_MAPPING,
-      getIcon: d => "marker",
-      getSize: 2,
-      getPosition: d => d.coordinates,
-      getColor: [255,255,255],
-      opacity: 1,
-      mipmaps: false,
-      pickable: true,
-      radiusMinPixels: 2,
-      radiusMaxPixels: 2,
-    }),
+    // new IconLayer({
+    //   id: "stop2",
+    //   data: stop2,
+    //   sizeScale: 7,
+    //   iconAtlas:
+    //     "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png",
+    //   iconMapping: ICON_MAPPING,
+    //   getIcon: d => "marker",
+    //   getSize: 2,
+    //   getPosition: d => d.coordinates,
+    //   getColor: [255,255,255],
+    //   opacity: 0.1,
+    //   mipmaps: false,
+    //   pickable: true,
+    //   radiusMinPixels: 2,
+    //   radiusMaxPixels: 2,
+    // }),
 
     new TripsLayer({  
       id: 'trips',

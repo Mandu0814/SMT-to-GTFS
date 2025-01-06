@@ -6,24 +6,24 @@ import Splash from "./components/Splash";
 import Trip from "./components/Trip";
 import "./css/app.css";
 
-const fetchData = (FilE_NAME) => {
-  const res = axios.get(
-    `https://raw.githubusercontent.com/1023sherry/SMT-to-GTFS/main/simulation/src/data/${FilE_NAME}.json`
-  );
-  const data = res.then((r) => r.data);
-  return data;
-};
-
-console.log("NODE_ENV:", process.env.NODE_ENV);
-
-
-// const fetchData = (fileName) => {
-//   const baseURL = process.env.NODE_ENV === "production"
-//     ? `https://raw.githubusercontent.com/1023sherry/UAM_NEW/main/uam/src/data/`
-//     : `${process.env.PUBLIC_URL}/data/`;
-  
-//   return axios.get(`${baseURL}${fileName}.json`).then((r) => r.data);
+// const fetchData = (FilE_NAME) => {
+//   const res = axios.get(
+//     `https://raw.githubusercontent.com/1023sherry/SMT-to-GTFS/main/simulation/src/data/${FilE_NAME}.json`
+//   );
+//   const data = res.then((r) => r.data);
+//   return data;
 // };
+
+// console.log("NODE_ENV:", process.env.NODE_ENV);
+
+
+const fetchData = (fileName) => {
+  const baseURL = process.env.NODE_ENV === "production"
+    ? `https://raw.githubusercontent.com/1023sherry/SMT-to-GTFS/main/simulation/src/data/`
+    : `${process.env.PUBLIC_URL}/data/`;
+  
+  return axios.get(`${baseURL}${fileName}.json`).then((r) => r.data);
+};
 
 
 const App = () => {
@@ -41,12 +41,13 @@ const App = () => {
 
   const getData = useCallback(async () => {
     // const ICON = await fetchData("icon_data");
-    const TRIP = await fetchData("bus_7611");
+    const TRIP = await fetchData("bus_7611_1_fix");
+    const TRIP2 = await fetchData("bus_7611_1_org");
+    
     const STOP = await fetchData("icon");
-    const LINE = await fetchData("line");
-
-    const TRIP2 = await fetchData("bus_7611_org");
     const STOP2 = await fetchData("icon_org");
+    
+    const LINE = await fetchData("line");
     const LINE2 = await fetchData("line_org");  
    
 
@@ -72,8 +73,9 @@ const App = () => {
       {!isloaded && <Splash />}
       {isloaded && (
         <>
-        <Trip name={"버스"} trip={trip} stop={stop} line={line}></Trip>
-        <Trip name={"버스 원본"} trip={trip2} stop={stop2} line={line2}></Trip>
+        <Trip name={"GTFS NEW"} trip={trip} stop={stop} line={line}></Trip>
+
+        <Trip name={"GTFS ORG"} trip2={trip2} stop2={stop2} line2 ={line2}></Trip>
       </>
       )}
     </div>
